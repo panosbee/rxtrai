@@ -1,0 +1,37 @@
+{
+  "id": "/app",
+  "name": "RxTrail — CRM Υγείας στο Σπίτι",
+  "short_name": "RxTrail",
+  "description": "CRM για Παρόχους Υγείας στο Σπίτι — Περιστατικά, Γνωματεύσεις, Επισκέψεις, Γιατροί ΕΟΠΥΥ",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#0D9488",
+  "theme_color": "#0D9488",
+  "categories": ["medical", "business", "productivity"],
+  "lang": "el",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+rxtrail",
+      "url": "/app?case=%s"
+    }
+  ]
+}

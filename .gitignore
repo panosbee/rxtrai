@@ -1,0 +1,35 @@
+# ── Secrets / περιβάλλον ─────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ── Python ───────────────────────────────────────────────────────────
+*.pyc
+__pycache__/
+.pytest_cache/
+.benchmarks/
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# ── Δεδομένα / uploads ───────────────────────────────────────────────
+uploads/*
+!uploads/.gitkeep
+*.log
+backups/
+.hf_cache/
+
+# ── Τοπικά αρχεία που ΔΕΝ ανεβαίνουν δημόσια ─────────────────────────
+_archive_dev/
+server.md
+RxTrail_SKU_Master_Plires.xlsx
+
+# ── OS / editor ──────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

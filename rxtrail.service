@@ -1,0 +1,41 @@
+[Unit]
+Description=RxTrail CRM — Homecare Provider Management
+After=network.target mongod.service
+Wants=mongod.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/rxtrail
+EnvironmentFile=/var/www/rxtrail/.env
+Environment=HF_HOME=/var/www/rxtrail/.hf_cache
+Environment=HF_HUB_DISABLE_SYMLINKS_WARNING=1
+Environment=TOKENIZERS_PARALLELISM=false
+ExecStart=/usr/bin/python3 -m uvicorn backend.main:app --host 127.0.0.1 --port 8002
+
+# Resource limits — light app, generous but safe
+MemoryMax=2G
+MemoryHigh=1.5G
+CPUQuota=200%
+
+# Restart policy
+Restart=always
+RestartSec=5
+
+# Auto-restart if stuck
+RuntimeMaxSec=86400
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/www/rxtrail /var/www/rxtrail/uploads /tmp
+PrivateTmp=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=rxtrail
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0E6E7E">
+<meta name="description" content="Το εργαλείο πεδίου για παρόχους αποζημιούμενων προϊόντων — από τη σύσταση μέχρι τη δωδέκατη επανάληψη.">
+<title>RxTrail — CRM για Παρόχους Υγείας στο Σπίτι</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;font-size:16px;overflow-x:hidden;overflow-y:auto}
+  body{font-family:var(--font-ui);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;line-height:1.6;overflow-x:hidden;overflow-y:auto;min-height:100vh}
+  section{padding:80px 24px}
+  .container{max-width:1100px;margin:0 auto}
+
+  /* Hero */
+  /* Fixed top nav */
+  .topnav{position:fixed;top:0;left:0;right:0;z-index:900;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:12px 24px;display:flex;justify-content:space-between;align-items:center}
+  .topnav .logo{font-size:18px;font-weight:700;color:var(--sea)}
+  .topnav .nav-btns{display:flex;gap:8px}
+  .btn-nav{height:40px;padding:0 20px;border:none;border-radius:var(--r-btn);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font-ui)}
+  .btn-nav-primary{background:var(--sea);color:#fff}
+  .btn-nav-primary:hover{background:var(--sea-deep)}
+  .btn-nav-outline{background:transparent;color:var(--sea);border:1.5px solid var(--sea)}
+  .btn-nav-outline:hover{background:var(--sea-mist)}
+  .hero{background:var(--paper);padding:120px 24px 60px;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1100px;margin:0 auto}
+  .hero h1{font-size:clamp(2rem,4vw,2.8rem);font-weight:700;line-height:1.1;color:var(--ink);margin-bottom:var(--sp-4)}
+  .hero h1 span{color:var(--sea)}
+  .hero .subtitle{font-size:18px;color:var(--ink-soft);margin-bottom:var(--sp-5);max-width:480px}
+  .hero-buttons{display:flex;gap:var(--sp-3);flex-wrap:wrap}
+  .btn-hero{display:inline-flex;align-items:center;gap:8px;height:52px;padding:0 32px;border:none;border-radius:var(--r-btn);background:var(--sea);color:#fff;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;font-family:var(--font-ui);transition:all var(--t-fast)}
+  .btn-hero:hover{background:var(--sea-deep);transform:translateY(-1px)}
+  .btn-hero-outline{display:inline-flex;align-items:center;gap:8px;height:52px;padding:0 32px;border:1.5px solid var(--line);border-radius:var(--r-btn);background:var(--surface);color:var(--ink);font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;font-family:var(--font-ui)}
+  .btn-hero-outline:hover{border-color:var(--sea);color:var(--sea)}
+
+  /* Animated ring mockup */
+  .hero-ring-demo{display:flex;align-items:center;justify-content:center}
+  .ring-container{position:relative;width:280px;height:280px}
+  .ring-container svg{width:100%;height:100%}
+  .ring-container .mockup-card{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:260px;background:var(--surface);border-radius:var(--r-card);box-shadow:var(--shadow-float);padding:var(--sp-4);border-left:4px solid var(--st-active)}
+  .mockup-card .mc-title{font-size:15px;font-weight:650;margin-bottom:4px}
+  .mockup-card .mc-meta{font-size:var(--fs-meta);color:var(--ink-faint)}
+  .mockup-card .mc-why{font-size:var(--fs-why);font-style:italic;color:var(--ink-soft);margin-top:8px}
+  .animated-ring{animation:fillRing 6s ease-in-out infinite}
+  @keyframes fillRing{0%,10%{stroke-dashoffset:88;stroke:#1D9E75}45%,55%{stroke-dashoffset:15;stroke:#D4610A}90%,100%{stroke-dashoffset:88;stroke:#1D9E75}}
+
+  /* State machine diagram */
+  .state-flow{display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;align-items:center;padding:var(--sp-5) 0}
+  .state-node{padding:var(--sp-2) var(--sp-4);border-radius:var(--r-chip);font-size:13px;font-weight:600;opacity:.3;transition:all .4s var(--ease)}
+  .state-node.visible{opacity:1}
+  .state-arrow{color:var(--ink-faint);font-size:18px;opacity:.3;transition:all .4s var(--ease)}
+  .state-arrow.visible{opacity:1}
+
+  /* Features */
+  .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--sp-5);margin-top:var(--sp-6)}
+  .feature-card{background:var(--surface);border-radius:var(--r-card);padding:var(--sp-5);box-shadow:var(--shadow-card);transition:all var(--t-base) var(--ease)}
+  .feature-card:hover{box-shadow:var(--shadow-float);transform:translateY(-4px)}
+  .feature-icon{font-size:40px;margin-bottom:var(--sp-3);display:block}
+  .feature-card h3{font-size:var(--fs-h2);font-weight:var(--w-h2);margin-bottom:var(--sp-2)}
+
+  /* Trust section */
+  .trust{background:var(--ink);color:#fff;text-align:center}
+  .trust h2{color:#fff;margin-bottom:var(--sp-4)}
+  .trust-bullets{display:flex;gap:var(--sp-6);justify-content:center;flex-wrap:wrap;margin-top:var(--sp-5)}
+  .trust-bullet{flex:1;min-width:200px;max-width:300px}
+  .trust-bullet .tb-icon{font-size:32px;margin-bottom:var(--sp-2);display:block}
+  .trust-bullet p{opacity:.85;font-size:var(--fs-meta)}
+
+  /* Footer */
+  .footer{padding:var(--sp-6) 24px;text-align:center}
+  .footer-text{color:var(--ink-faint);font-size:var(--fs-meta)}
+
+  /* Auth modal */
+  .auth-overlay{position:fixed;inset:0;background:rgba(20,35,44,.5);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+  .auth-overlay.open{display:flex}
+  .auth-card{background:var(--surface);border-radius:var(--r-card);box-shadow:var(--shadow-float);padding:40px;width:min(420px,92vw);animation:slideUp .4s var(--ease)}
+  @keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .auth-card .close-btn{float:right;background:none;border:none;font-size:24px;cursor:pointer;color:var(--ink-faint)}
+  .auth-tabs{display:flex;background:var(--sea-mist);border-radius:var(--r-chip);padding:4px;margin:24px 0}
+  .auth-tab-btn{flex:1;border:none;background:transparent;padding:8px 16px;border-radius:var(--r-chip);font-size:14px;font-weight:600;color:var(--ink-soft);cursor:pointer;font-family:var(--font-ui)}
+  .auth-tab-btn.active{background:var(--surface);color:var(--sea);box-shadow:var(--shadow-card)}
+  .auth-field{margin-bottom:var(--sp-4)}
+  .auth-field label{display:block;font-size:12px;font-weight:600;color:var(--ink-soft);margin-bottom:4px;text-transform:uppercase}
+  .auth-field input{width:100%;padding:12px 16px;border:1.5px solid var(--line);border-radius:var(--r-btn);font-size:16px;font-family:var(--font-ui)}
+  .auth-field input:focus{outline:none;border-color:var(--sea);box-shadow:0 0 0 3px var(--sea-mist)}
+  .auth-submit{width:100%;height:52px;border:none;border-radius:var(--r-btn);background:var(--sea);color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--font-ui)}
+  .auth-submit:hover{background:var(--sea-deep)}
+  .auth-error{color:var(--danger);font-size:var(--fs-meta);margin-top:8px;display:none}
+  .auth-error.show{display:block}
+
+  @media(max-width:768px){
+    .hero-grid{grid-template-columns:1fr;gap:var(--sp-5)}
+    .hero{padding:60px 20px 40px}
+    section{padding:60px 20px}
+    .ring-container{width:200px;height:200px}
+    .mockup-card{width:200px}
+  }
+</style>
+</head>
+<body>
+
+<!-- Always-visible top nav -->
+<nav class="topnav">
+  <span class="logo">RxTrail</span>
+  <div class="nav-btns">
+    <button class="btn-nav btn-nav-primary" onclick="switchAuthTab('login');openAuth();">Είσοδος</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <h1>Η γνωμάτευση δεν είναι χαρτί.<br><span>Είναι πελάτης για χρόνια.</span></h1>
+      <p class="subtitle">Το εργαλείο πεδίου για παρόχους αποζημιούμενων προϊόντων — από τη σύσταση μέχρι τη δωδέκατη επανάληψη.</p>
+      <div class="hero-buttons">
+        <a href="#" class="btn-hero" onclick="openAuth();return false">Είσοδος στην εφαρμογή</a>
+        <a href="#cycle" class="btn-hero-outline">Δες πώς δουλεύει ↓</a>
+      </div>
+    </div>
+    <div class="hero-ring-demo">
+      <div class="ring-container">
+        <svg viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="14" fill="none" stroke="var(--line)" stroke-width="4"/>
+          <circle class="animated-ring" cx="20" cy="20" r="14" fill="none" stroke-width="4" stroke-linecap="round"
+            stroke-dasharray="88" transform="rotate(-90 20 20)"/>
+          <text x="20" y="21" text-anchor="middle" font-size="13" font-weight="600" fill="var(--ink)" font-family="'IBM Plex Mono',monospace">25</text>
+        </svg>
+        <div class="mockup-card">
+          <div class="mc-title">Παππούς Γάζι — κατάκλιση</div>
+          <div class="mc-meta"><span style="display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(29,158,117,.12);color:#1D9E75;font-size:12px;font-weight:600;">ΕΝΕΡΓΟ</span> · Πηγή: Μαρία/ΒσΣ</div>
+          <div class="mc-why">«Η επανάληψη λήγει σε 5 μέρες — κανόνισε πριν πάει αλλού.»</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- State machine -->
+<section id="cycle">
+  <div class="container" style="text-align:center">
+    <h2 style="font-size:var(--fs-h2);font-weight:var(--w-h2);margin-bottom:var(--sp-2)">Ένας κύκλος. Οκτώ καταστάσεις. Καμία χαμένη επανάληψη.</h2>
+    <div class="state-flow" id="state-flow">
+      <span class="state-node" style="background:rgba(183,121,31,.12);color:var(--st-new);">ΝΕΟ</span><span class="state-arrow">→</span>
+      <span class="state-node" style="background:rgba(124,92,191,.12);color:var(--st-assessed);">ΑΞΙΟΛΟΓΗΘΗΚΕ</span><span class="state-arrow">→</span>
+      <span class="state-node" style="background:rgba(43,108,176,.12);color:var(--st-atdoctor);">ΣΕ ΓΙΑΤΡΟ</span><span class="state-arrow">→</span>
+      <span class="state-node" style="background:rgba(14,126,90,.12);color:var(--st-prescribed);">ΓΡΑΦΤΗΚΕ</span><span class="state-arrow">→</span>
+      <span class="state-node" style="background:rgba(29,158,117,.12);color:var(--st-active);">ΕΝΕΡΓΟ</span>
+    </div>
+    <p style="color:var(--ink-faint);font-size:var(--fs-meta);margin-top:var(--sp-3)">+ ΣΕ ΚΙΝΔΥΝΟ · ΧΑΘΗΚΕ · ΕΚΛΕΙΣΕ — κάθε μετάβαση καταγράφεται, τίποτα δεν ξεχνιέται.</p>
+  </div>
+</section>
+
+<!-- 3 flows -->
+<section style="background:var(--surface)">
+  <div class="container">
+    <h2 style="text-align:center;font-size:var(--fs-h2);font-weight:var(--w-h2);margin-bottom:var(--sp-6)">Οι τρεις ιερές ροές</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🎤</span>
+        <h3>Περιστατικό με τη φωνή σου — 30″</h3>
+        <p style="color:var(--ink-soft)">Μίλα ελεύθερα. Το AI καταλαβαίνει ποιος, πού, τι χρειάζεται. Μηδέν πληκτρολόγηση.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">📸</span>
+        <h3>Γνωμάτευση με μια φωτογραφία</h3>
+        <p style="color:var(--ink-soft)">Βγάλε φωτογραφία. Το OCR διαβάζει ελληνικά. Το AI δομεί κωδικούς και ποσότητες.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">✅</span>
+        <h3>Επίσκεψη σε 20″</h3>
+        <p style="color:var(--ink-soft)">Ποιον είδες; Τι έγινε; Δύο taps. Καταχωρήθηκε. Συνέχισε τη διαδρομή σου.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust -->
+<section class="trust">
+  <h2>Τα δεδομένα σου μένουν στην Ευρώπη, στον δικό σου server.</h2>
+  <p style="opacity:.8">Τίποτα προσωπικό δεν φεύγει ποτέ σε τρίτους.</p>
+  <div class="trust-bullets">
+    <div class="trust-bullet"><span class="tb-icon">🇪🇺</span><p>EU hosting — τα δεδομένα σου δεν φεύγουν από την Ευρώπη</p></div>
+    <div class="trust-bullet"><span class="tb-icon">🛡️</span><p>PII firewall — scrubαρισμένα δεδομένα πριν από κάθε εξωτερική κλήση</p></div>
+    <div class="trust-bullet"><span class="tb-icon">📋</span><p>Πλήρες audit log — ποιος, τι, πότε. Τίποτα δεν διαγράφεται.</p></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="text-align:center">
+  <h2 style="font-size:var(--fs-h2);font-weight:var(--w-h2);margin-bottom:var(--sp-4)">Έτοιμος να ξεκινήσεις;</h2>
+  <a href="#" class="btn-hero" onclick="openAuth();return false">Είσοδος στην εφαρμογή</a>
+  <p style="color:var(--ink-faint);font-size:var(--fs-meta);margin-top:var(--sp-3)">Φτιαγμένο στην Κρήτη</p>
+</section>
+
+<!-- Footer -->
+<footer class="footer"><p class="footer-text">© 2026 RxTrail · CRM για Παρόχους Υγείας στο Σπίτι</p></footer>
+
+<!-- Auth Modal -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-card">
+    <button class="close-btn" onclick="closeAuth()">✕</button>
+    <h2 style="font-size:var(--fs-h2);font-weight:var(--w-h2);text-align:center">Καλώς ήρθες στο RxTrail</h2>
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" onclick="switchAuthTab('login')">Είσοδος</button>
+    </div>
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="auth-field"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com" required></div>
+      <div class="auth-field"><label>Κωδικός</label><input type="password" id="login-password" placeholder="••••••" required minlength="6"></div>
+      <button type="submit" class="auth-submit">Είσοδος</button>
+      <p class="auth-error" id="login-error"></p>
+    </form>
+    <p class="auth-note" style="text-align:center;font-size:12.5px;color:var(--ink-faint);margin-top:12px;">Δεν έχεις λογαριασμό; Ο λογαριασμός δημιουργείται από τον διαχειριστή.</p>
+  </div>
+</div>
+
+<script>
+// Auto-detect API base
+const API = (() => {
+  const h = window.location.hostname;
+  if (h === '127.0.0.1' || h === 'localhost') return 'http://' + h + ':8000';
+  return window.location.origin;
+})();
+
+// Clear ALL service workers and caches on page load
+(async function clearSW() {
+  if ('serviceWorker' in navigator) {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    for (const r of regs) { await r.unregister(); }
+    const keys = await caches.keys();
+    for (const k of keys) { await caches.delete(k); }
+    console.log('SWs & caches cleared');
+  }
+})();
+let authTab = 'login';
+
+function openAuth() { document.getElementById('auth-overlay').classList.add('open'); }
+function closeAuth() { document.getElementById('auth-overlay').classList.remove('open'); }
+function switchAuthTab(t) {
+  authTab = t;
+  document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.toggle('active', true));
+  const lf = document.getElementById('login-form');
+  if (lf) lf.style.display = '';
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const err = document.getElementById('login-error');
+  err.classList.remove('show');
+  const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+  const prefix = isLocal ? '' : '/api';
+  try {
+    const r = await fetch(`${API}${prefix}/auth/login`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.getElementById('login-email').value.trim(),password:document.getElementById('login-password').value})});
+    if(!r.ok){const d=await r.json();throw new Error(d.detail||'Λάθος email ή κωδικός');}
+    const d=await r.json();
+    localStorage.setItem('rxtrail_token',d.access_token);
+    window.location.href='/app';
+  }catch(ex){err.textContent=ex.message;err.classList.add('show');}
+}
+
+document.getElementById('auth-overlay').addEventListener('click',function(e){if(e.target===this)closeAuth()});
+
+// Auto-redirect if token exists — but verify it first
+async function checkTokenAndRedirect() {
+  const token = localStorage.getItem('rxtrail_token');
+  if (!token) return;
+  const isLocal = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+  const prefix = isLocal ? '' : '/api';
+  try {
+    const r = await fetch(`${API}${prefix}/auth/me`, { headers: { 'Authorization': `Bearer ${token}` } });
+    if (r.ok) {
+      window.location.href = '/app';
+    } else {
+      // Token invalid — clear it so user can login fresh
+      localStorage.removeItem('rxtrail_token');
+      localStorage.removeItem('rxtrail_wizard_shown');
+    }
+  } catch (e) {
+    // Server not reachable, keep token
+  }
+}
+checkTokenAndRedirect();
+
+// Scroll-triggered state animation
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) {
+      document.querySelectorAll('.state-node,.state-arrow').forEach((el,i) => {
+        setTimeout(() => el.classList.add('visible'), i*120);
+      });
+    }
+  });
+}, {threshold:0.3});
+observer.observe(document.getElementById('state-flow'));
+</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0E6E7E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RxTrail">
+<meta name="description" content="CRM για Παρόχους Υγείας στο Σπίτι">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon.png">
+<link rel="manifest" href="manifest.json">
+<title>RxTrail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;650;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="styles.css?v=23">
+</head>
+<body>
+
+<!-- Splash -->
+<div id="splash">
+  <div class="splash-mark">💊</div>
+  <div class="splash-title">RxTrail</div>
+  <div class="splash-sub">CRM Υγείας στο Σπίτι</div>
+  <div class="spinner"></div>
+</div>
+
+<!-- Auth -->
+<div id="auth-screen" class="screen hidden">
+  <div class="auth-container">
+    <div class="auth-brand">
+      <span class="logo-icon">💊</span>
+      <h2>RxTrail</h2>
+      <p>CRM για Παρόχους Υγείας στο Σπίτι</p>
+    </div>
+    <form id="login-form" class="auth-form">
+      <div class="form-field"><label>Email</label><input type="email" id="login-email" placeholder="you@example.com" autocomplete="username" required></div>
+      <div class="form-field"><label>Κωδικός</label><input type="password" id="login-password" placeholder="••••••" autocomplete="current-password" required minlength="6"></div>
+      <button type="submit" class="btn-primary full-width">Είσοδος</button>
+      <p id="login-error" class="error-msg hidden"></p>
+    </form>
+    <p class="auth-note">Δεν έχεις λογαριασμό; Ο λογαριασμός δημιουργείται από τον διαχειριστή.</p>
+  </div>
+</div>
+
+<!-- App Shell -->
+<div id="app-shell" class="screen hidden">
+  <!-- Desktop sidebar (≥1024px) -->
+  <aside id="desktop-sidebar" class="desktop-sidebar" style="display:none"></aside>
+
+  <!-- Header -->
+  <header id="topbar">
+    <div>
+      <h1 id="page-title">RxTrail</h1>
+      <span class="header-date" id="header-date"></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <button id="topbar-admin" class="admin-only hidden" aria-label="Διαχείριση" title="🛡️ Διαχείριση χρηστών (admin)">🛡️</button>
+      <button id="topbar-avatar" aria-label="Μενού" onclick="document.getElementById('side-menu').classList.toggle('hidden');document.getElementById('side-overlay').classList.toggle('hidden');">☰</button>
+    </div>
+  </header>
+
+  <!-- Tab bar -->
+  <nav id="tabbar">
+    <button data-view="today" class="tab-btn active"><span class="tab-ico">📋</span>Σήμερα</button>
+    <button data-view="cases" class="tab-btn"><span class="tab-ico">📁</span>Περιστατικά</button>
+    <button data-view="plan" class="tab-btn"><span class="tab-ico">📅</span>Πλάνο</button>
+    <button data-view="network" class="tab-btn"><span class="tab-ico">🔗</span>Δίκτυο</button>
+    <button data-view="dashboard" class="tab-btn"><span class="tab-ico">📈</span>Ταμπλό</button>
+    <button data-view="knowledge" class="tab-btn"><span class="tab-ico">📚</span>Γνώση</button>
+  </nav>
+
+  <!-- View container -->
+  <main id="view-container">
+    <div id="view-today" class="view active"></div>
+    <div id="view-cases" class="view"></div>
+    <div id="view-plan" class="view"></div>
+    <div id="view-network" class="view"></div>
+    <div id="view-dashboard" class="view"></div>
+    <div id="view-knowledge" class="view"></div>
+    <div id="view-manual" class="view"></div>
+    <div id="view-share" class="view"></div>
+    <div id="view-admin" class="view"></div>
+  </main>
+
+  <!-- FAB -->
+  <button id="fab" class="fab" aria-label="Νέα καταχώρηση" onclick="var m=document.getElementById('fab-menu');var f=document.getElementById('fab');if(m.classList.contains('hidden')){m.classList.remove('hidden');f.classList.add('open');}else{m.classList.add('hidden');f.classList.remove('open');}">+</button>
+  <div id="fab-menu" class="fab-menu hidden">
+    <button onclick="event.stopPropagation();document.getElementById('fab-menu').classList.add('hidden');document.getElementById('fab').classList.remove('open');import('./components/newCaseForm.js').then(m=>m.openNewCaseForm())">🎤 Νέο περιστατικό</button>
+    <button onclick="event.stopPropagation();document.getElementById('fab-menu').classList.add('hidden');document.getElementById('fab').classList.remove('open');import('./views/visits.js').then(m=>{var el=document.getElementById('view-today');if(el){m.renderVisitsView(el);setTimeout(()=>{var b=document.getElementById('nv-btn');if(b)b.click()},400)}})">📋 Επίσκεψη</button>
+    <button onclick="event.stopPropagation();document.getElementById('fab-menu').classList.add('hidden');document.getElementById('fab').classList.remove('open');import('./components/upload_wizard.js').then(m=>m.openPhotoUpload())">📸 Γνωμάτευση</button>
+  </div>
+
+  <!-- Side menu -->
+  <aside id="side-menu" class="side-menu hidden">
+    <div class="side-menu-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="user-avatar" id="side-user-avatar"></div>
+        <div>
+          <div style="font-weight:700;font-size:15px" id="side-user-name"></div>
+          <div class="text-sm" style="color:var(--c-text-secondary)" id="side-user-email"></div>
+        </div>
+      </div>
+    </div>
+    <nav style="flex:1;">
+      <a href="#" data-nav="onboarding">🎓 Οδηγός εκκίνησης</a>
+      <a href="#" data-nav="install" id="nav-install">📲 Εγκατάσταση εφαρμογής</a>
+      <a href="#" data-nav="manual">📖 Εγχειρίδιο Χρήσης</a>
+      <a href="#" data-nav="share">🗂️ Κοινός Χώρος</a>
+      <a href="#" data-nav="password" id="nav-password">🔑 Αλλαγή κωδικού</a>
+      <a href="#" data-nav="admin" id="nav-admin" class="admin-only hidden">🛡️ Διαχείριση</a>
+      <a href="#" data-nav="settings">⚙️ Ρυθμίσεις</a>
+      <a href="#" data-nav="import">📥 Εισαγωγή δεδομένων</a>
+      <a href="#" data-nav="export">📤 Εξαγωγή Excel</a>
+    </nav>
+    <button id="btn-logout" style="margin:12px;padding:12px;background:#EF4444;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;width:calc(100% - 24px);">🚪 Έξοδος</button>
+    <div class="app-version">RxTrail v2026.08.17 · build 7</div>
+  </aside>
+  <div id="side-overlay" class="overlay hidden" onclick="document.getElementById('side-menu').classList.add('hidden');this.classList.add('hidden')"></div>
+</div>
+
+<!-- Modal -->
+<div id="modal-overlay" class="overlay hidden"></div>
+<div id="modal-container" class="modal hidden">
+  <div class="modal-header"><h2 id="modal-title"></h2><button id="modal-close" class="icon-btn">✕</button></div>
+  <div id="modal-body" class="modal-body"></div>
+</div>
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script type="module" src="app.js?v=22"></script>
+</body>
+</html>
